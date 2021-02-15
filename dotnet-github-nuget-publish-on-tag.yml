@@ -1,0 +1,34 @@
+name: .NET (GitHub Nuget publish on v tag)
+
+on:
+  push:
+    branches:
+        - main
+    tags:
+        - 'v*.*.*'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set env
+      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Add GitHub as package source
+      run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ secrets.PACKAGE_PAT_KEY }} --store-password-in-clear-text
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --configuration Release --no-build --verbosity normal
+    - name: Pack
+      run: dotnet pack --configuration Release -p:PackageVersion=${{ env.RELEASE_VERSION }} --no-build --no-restore
+    - name: NuGet push
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.PACKAGE_PAT_KEY }} --source github
