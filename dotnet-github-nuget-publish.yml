@@ -1,4 +1,4 @@
-name: .NET (GitHub Nuget publish)
+name: .NET (GitHub Nuget publish, with build and test)
 
 on:
   push:
