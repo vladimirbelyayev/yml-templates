@@ -17,6 +17,8 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Add GitHub as package source
+      run: dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ secrets.PACKAGE_PAT_KEY }} --store-password-in-clear-text
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -26,6 +28,4 @@ jobs:
     - name: Pack
       run: dotnet pack --configuration Release --no-build --no-restore
     - name: NuGet push
-      run: |
-        dotnet nuget add source https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json --name github --username ${{ github.repository_owner }} --password ${{ github.token }} --store-password-in-clear-text
-        dotnet nuget push **/*.nupkg --api-key ${{ secrets.PACKAGE_PAT_KEY }} --source github
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.PACKAGE_PAT_KEY }} --source github
