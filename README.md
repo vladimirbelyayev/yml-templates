@@ -1,2 +1,2 @@
-# yml-templates
-YAML pipeline templates
+# YAML pipeline templates
+Templates for CI/CD pipelines
