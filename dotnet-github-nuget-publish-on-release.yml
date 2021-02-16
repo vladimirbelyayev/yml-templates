@@ -26,7 +26,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --configuration Release --no-build --verbosity normal
+      run: dotnet test --configuration Release --no-build --no-restore --verbosity normal
     - name: Pack
       run: dotnet pack --configuration Release -p:PackageVersion=${{ env.RELEASE_VERSION }} --no-build --no-restore
     - name: NuGet push
